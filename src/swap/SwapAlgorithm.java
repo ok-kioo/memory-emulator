@@ -20,25 +20,26 @@ public class SwapAlgorithm {
 
     public void swap(Page page) {
         for(Page index : secondChanceList) {
-            if(index.referenceBit) {
-                index.referenceBit = false;
+            if(index.getReferenceBit()) {
+                index.setReferenceBit(false);
                 Page temp = secondChanceList.removeFirst();
                 secondChanceList.addLast(temp);
 
             } else {
-                index.presentBit = false;
-                int indexFrameNumber = index.frameNumber;
+                index.setPresentBit(false);
+                int indexFrameNumber = index.getFrameNumber();
                 secondChanceList.removeFirst();
 
                 secondChanceList.addLast(page);
-                int pageFrameNumber = page.frameNumber;
-                page.presentBit = true;
+                int pageFrameNumber = page.getFrameNumber();
+                page.setPresentBit(true);
 
-                page.frameNumber = indexFrameNumber;
-                index.frameNumber = pageFrameNumber;
+                page.setFrameNumber(indexFrameNumber);
+                index.setFrameNumber(pageFrameNumber);
 
-                physicalMemory.physicalMemoryArray[page.frameNumber] = page;
-                disk.diskMemoryArray[index.frameNumber] = index;
+                Integer temp = physicalMemory.memoryArray[page.getFrameNumber()];
+                physicalMemory.memoryArray[page.getFrameNumber()] = physicalMemory.memoryArray[index.getFrameNumber()];
+                disk.memoryArray[index.getFrameNumber()] = temp;
             }
         }
     }

@@ -3,22 +3,37 @@ package src.memory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PhysicalMemory {
-    private static final int MAX_MEMORY_SLOTS = 16;
+public class PhysicalMemory implements  Memory{
     private static final PhysicalMemory instance = new PhysicalMemory();
-    public Page[] physicalMemoryArray = new Page[MAX_MEMORY_SLOTS];
+    public Integer[] memoryArray = new Integer[MAX_MEMORY_SLOTS];
 
-
-    private PhysicalMemory() { }
+    private PhysicalMemory() {
+    }
 
     public static PhysicalMemory getInstance() {
         return instance;
     }
 
+    @Override
+    public Integer[] getMemoryArray() {
+        return memoryArray;
+    }
+
+    @Override
+    public boolean isFull() {
+        for (Integer value : this.memoryArray){
+            if (value == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public List<Integer> getFreeFrameIndex() {
         List<Integer> freeSlots = new ArrayList<>();
-        for (int i = 0; i < physicalMemoryArray.length; i++) {
-            if (physicalMemoryArray[i] == null) {
+        for (int i = 0; i < memoryArray.length; i++) {
+            if (memoryArray[i] == null) {
                 freeSlots.add(i);
             }
         }

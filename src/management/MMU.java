@@ -15,15 +15,14 @@ public class MMU {
     public int readPage(int virtualAddress) {
         Page page = pageTable.verifyPage(virtualAddress);
         if (page == null) {
-            throw new IllegalArgumentException("Page not found for address: " + virtualAddress);
+            throw new IllegalArgumentException("Page not found for reading in memory for address: " + virtualAddress);
+        } else {
+            if (!page.getPresentBit()) {
+                pageFault.swapPage(page);
+            }
+            page.setReferenceBit(true);
+            return physicalMemory.memoryArray[page.getFrameNumber()];
         }
-
-        if (!page.presentBit) {
-            pageFault.swapPage(page);
-        }
-
-        page.referenceBit = true;
-        return page.value;
     }
 
     public void writePage(int virtualAddress, int newValue) {
@@ -34,21 +33,21 @@ public class MMU {
                 throw new IllegalArgumentException("All memory address fully");
             }
 
-            if (physicalMemory.getFreeFrameIndex().isEmpty()) {
-                Page newPage = pageFault.createPage(disk.getFreeFrameIndex().getFirst(), virtualAddress);
+            if (physicalMemory.isFull()) {
+                Page newPage = pageFault.createPage(disk.getFreeFrameIndex().getFirst(), virtualAddress, newValue, disk);
                 pageFault.swapPage(newPage);
             } else {
-                Page newPage = pageFault.createPage(physicalMemory.getFreeFrameIndex().getFirst(), virtualAddress);
+                Page newPage = pageFault.createPage(physicalMemory.getFreeFrameIndex().getFirst(), virtualAddress, newValue, physicalMemory);
                 swapAlgorithm.addPage(newPage);
             }
-        }
+        } else{
+            if (!page.getPresentBit()) {
+                pageFault.swapPage(page);
+            }
 
-        if (!page.presentBit) {
-            pageFault.swapPage(page);
+            physicalMemory.memoryArray[page.getFrameNumber()] = newValue;
+            page.setReferenceBit(true);
         }
-
-        page.value = newValue;
-        page.referenceBit = true;
     }
 
 }

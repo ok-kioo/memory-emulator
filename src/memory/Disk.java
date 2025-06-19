@@ -3,10 +3,9 @@ package src.memory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Disk {
-    private static final int MAX_MEMORY_SLOTS = 16;
+public class Disk implements  Memory {
     private static final Disk instance = new Disk();
-    public Page[] diskMemoryArray = new Page[MAX_MEMORY_SLOTS];
+    public Integer[] memoryArray = new Integer[MAX_MEMORY_SLOTS];
 
     private Disk() {
     }
@@ -15,19 +14,26 @@ public class Disk {
         return instance;
     }
 
-    public boolean isFull() {
-        for (Page page : this.diskMemoryArray){
-            if (page == null) {
-                return true;
-            }
-        }
-        return false;
+    @Override
+    public Integer[] getMemoryArray() {
+        return memoryArray;
     }
 
+    @Override
+    public boolean isFull() {
+        for (Integer value : this.memoryArray){
+            if (value == null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public List<Integer> getFreeFrameIndex() {
         List<Integer> freeSlots = new ArrayList<>();
-        for (int i = 0; i < diskMemoryArray.length; i++) {
-            if (diskMemoryArray[i] == null) {
+        for (int i = 0; i < memoryArray.length; i++) {
+            if (memoryArray[i] == null) {
                 freeSlots.add(i);
             }
         }
