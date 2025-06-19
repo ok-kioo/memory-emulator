@@ -1,7 +1,7 @@
-package src.management;
-import src.memory.Memory;
-import src.memory.Page;
-import src.swap.SwapAlgorithm;
+package br.upe.siga.management;
+import br.upe.siga.memory.Memory;
+import br.upe.siga.memory.Page;
+import br.upe.siga.swap.SwapAlgorithm;
 
 
 public class PageFault {

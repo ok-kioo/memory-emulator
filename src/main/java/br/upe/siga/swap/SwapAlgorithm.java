@@ -1,8 +1,8 @@
-package src.swap;
+package br.upe.siga.swap;
 
-import src.memory.Disk;
-import src.memory.Page;
-import src.memory.PhysicalMemory;
+import br.upe.siga.memory.Disk;
+import br.upe.siga.memory.Page;
+import br.upe.siga.memory.PhysicalMemory;
 
 import java.util.LinkedList;
 

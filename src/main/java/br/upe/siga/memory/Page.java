@@ -1,4 +1,4 @@
-package src.memory;
+package br.upe.siga.memory;
 
 public class Page {
     private boolean referenceBit;

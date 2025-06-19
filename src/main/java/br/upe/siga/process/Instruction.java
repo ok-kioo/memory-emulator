@@ -1,6 +1,6 @@
-package src.process;
+package br.upe.siga.process;
 
-import src.management.MMU;
+import br.upe.siga.management.MMU;
 
 public class Instruction {
     private int memoryAddress;

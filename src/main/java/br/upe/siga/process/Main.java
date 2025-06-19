@@ -1,6 +1,6 @@
-package src.process;
+package br.upe.siga.process;
 
-import src.management.MMU;
+import br.upe.siga.management.MMU;
 
 public class Main {
     private static final String[] process1 = {"4-R", "5-R", "0-R", "4-W-2"};

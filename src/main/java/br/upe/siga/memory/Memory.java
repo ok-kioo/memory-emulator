@@ -1,4 +1,4 @@
-package src.memory;
+package br.upe.siga.memory;
 
 import java.util.List;
 

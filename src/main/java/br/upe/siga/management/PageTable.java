@@ -1,6 +1,6 @@
-package src.management;
+package br.upe.siga.management;
 
-import src.memory.Page;
+import br.upe.siga.memory.Page;
 
 import java.util.HashMap;
 import java.util.Map;
