@@ -5,7 +5,7 @@ import java.util.List;
 
 public class PhysicalMemory implements  Memory{
     private static final PhysicalMemory instance = new PhysicalMemory();
-    public Integer[] memoryArray = new Integer[MAX_MEMORY_SLOTS];
+    private Integer[] memoryArray = new Integer[MAX_MEMORY_SLOTS];
 
     private PhysicalMemory() {
     }

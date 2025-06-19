@@ -6,11 +6,19 @@ import br.upe.siga.memory.PhysicalMemory;
 import br.upe.siga.swap.SwapAlgorithm;
 
 public class MMU {
-    private final PageTable pageTable = PageTable.getInstance();
-    private final PhysicalMemory physicalMemory = PhysicalMemory.getInstance();
-    private final Disk disk = Disk.getInstance();
-    private final SwapAlgorithm swapAlgorithm = SwapAlgorithm.getInstance();
-    private final PageFault pageFault = new PageFault();
+    private final PageTable pageTable;
+    private final PhysicalMemory physicalMemory;
+    private final Disk disk;
+    private final SwapAlgorithm swapAlgorithm;
+    private final PageFault pageFault;
+
+    public MMU(PhysicalMemory physicalMemory, Disk disk, PageTable pageTable, SwapAlgorithm swapAlgorithm, PageFault pageFault) {
+        this.physicalMemory = physicalMemory;
+        this.disk = disk;
+        this.pageTable = pageTable;
+        this.swapAlgorithm = swapAlgorithm;
+        this.pageFault = pageFault;
+    }
 
     public int readPage(int virtualAddress) {
         Page page = pageTable.verifyPage(virtualAddress);
@@ -21,7 +29,7 @@ public class MMU {
                 pageFault.swapPage(page);
             }
             page.setReferenceBit(true);
-            return physicalMemory.memoryArray[page.getFrameNumber()];
+            return physicalMemory.getMemoryArray()[page.getFrameNumber()];
         }
     }
 
@@ -45,7 +53,7 @@ public class MMU {
                 pageFault.swapPage(page);
             }
 
-            physicalMemory.memoryArray[page.getFrameNumber()] = newValue;
+            physicalMemory.getMemoryArray()[page.getFrameNumber()] = newValue;
             page.setReferenceBit(true);
         }
     }

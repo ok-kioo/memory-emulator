@@ -2,18 +2,8 @@ package br.upe.siga.process;
 
 import br.upe.siga.management.MMU;
 
-public class Main {
-    private static final String[] process1 = {"4-R", "5-R", "0-R", "4-W-2"};
-    private static final String[] process2 = {"1-R", "5-W-4", "2-R", "2-W-6"};
-
-    public static void main(String[] args) {
-        MMU mmu = new MMU();
-
-        thread(process1, mmu);
-        thread(process2, mmu);
-    }
-
-    public static void thread(String[] process, MMU mmu) {
+public class Process {
+    public void thread(String[] process, MMU mmu) {
         new Thread(() -> {
             for (String commands : process) {
                 String[] instructions = commands.split("-");

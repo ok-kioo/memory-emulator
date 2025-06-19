@@ -37,9 +37,9 @@ public class SwapAlgorithm {
                 page.setFrameNumber(indexFrameNumber);
                 index.setFrameNumber(pageFrameNumber);
 
-                Integer temp = physicalMemory.memoryArray[page.getFrameNumber()];
-                physicalMemory.memoryArray[page.getFrameNumber()] = physicalMemory.memoryArray[index.getFrameNumber()];
-                disk.memoryArray[index.getFrameNumber()] = temp;
+                Integer temp = physicalMemory.getMemoryArray()[page.getFrameNumber()];
+                physicalMemory.getMemoryArray()[page.getFrameNumber()] = physicalMemory.getMemoryArray()[index.getFrameNumber()];
+                disk.getMemoryArray()[index.getFrameNumber()] = temp;
             }
         }
     }
