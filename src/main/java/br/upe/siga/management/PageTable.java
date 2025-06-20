@@ -1,6 +1,7 @@
 package br.upe.siga.management;
 
 import br.upe.siga.memory.Page;
+import com.sun.source.tree.SynchronizedTree;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,11 +16,11 @@ public class PageTable {
         return instance;
     }
 
-    public Page verifyPage(int virtualAddress) {
+    public synchronized Page verifyPage(int virtualAddress) {
         return virtualHash.getOrDefault(virtualAddress, null);
     }
 
-    public void setPageTable(int virtualAddress, Page page) {
+    public synchronized void setPageTable(int virtualAddress, Page page) {
         virtualHash.put(virtualAddress, page);
     }
 }

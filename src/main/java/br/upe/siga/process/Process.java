@@ -34,6 +34,12 @@ public class Process {
                 }catch (Exception e) {
                     e.printStackTrace();
                 }
+
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
     }

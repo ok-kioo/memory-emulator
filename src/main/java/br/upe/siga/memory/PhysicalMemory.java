@@ -30,14 +30,16 @@ public class PhysicalMemory implements  Memory{
     }
 
     @Override
-    public List<Integer> getFreeFrameIndex() {
-        List<Integer> freeSlots = new ArrayList<>();
+    public synchronized List<Integer> getFreeFrameIndex() {
+        List<Integer> freeSlot = new ArrayList<>();
         for (int i = 0; i < memoryArray.length; i++) {
             if (memoryArray[i] == null) {
-                freeSlots.add(i);
+                freeSlot.add(i);
+                memoryArray[i] = -1;
+                break;
             }
         }
-        return freeSlots;
+        return freeSlot;
     }
 }
 
