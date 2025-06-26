@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PageTable {
+    private static final int SIZE_PAGE_TABLE = 32;
+    private int sizeCount = 0;
     private static final PageTable instance = new PageTable();
     private Map<Integer, Page> virtualHash = new HashMap<Integer, Page>();
 
@@ -21,6 +23,11 @@ public class PageTable {
     }
 
     public synchronized void setPageTable(int virtualAddress, Page page) {
-        virtualHash.put(virtualAddress, page);
+        if(this.sizeCount < SIZE_PAGE_TABLE) {
+            this.sizeCount++;
+            virtualHash.put(virtualAddress, page);
+        } else {
+            throw new IllegalStateException("Page table is full, cannot add more pages.");
+        }
     }
 }

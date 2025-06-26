@@ -11,7 +11,7 @@ public class AssistantClock {
         new Thread(() -> {
             while (true) {
                 try {
-                    Thread.sleep(8000);
+                    Thread.sleep(10000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
