@@ -5,6 +5,8 @@ import br.upe.siga.memory.Page;
 import br.upe.siga.memory.PhysicalMemory;
 import br.upe.siga.swap.SwapAlgorithm;
 
+import java.util.Arrays;
+
 public class MMU {
     private final PageTable pageTable;
     private final PhysicalMemory physicalMemory;
@@ -26,9 +28,15 @@ public class MMU {
             throw new IllegalArgumentException("Page not found for reading in memory for address: " + virtualAddress);
         } else {
             if (!page.getPresentBit()) {
+                System.out.println("Page not present in physical memory, swapping page...");
                 pageFault.swapPage(page);
             }
             page.setReferenceBit(true);
+
+            if (virtualAddress == 20){
+                System.out.println(Arrays.toString(physicalMemory.getMemoryArray()));
+                System.out.println(page.getFrameNumber());
+            }
             return physicalMemory.getMemoryArray()[page.getFrameNumber()];
         }
     }

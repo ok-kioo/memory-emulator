@@ -8,31 +8,46 @@ import br.upe.siga.swap.SwapAlgorithm;
 public class PageFault {
     private final SwapAlgorithm swapAlgorithm = SwapAlgorithm.getInstance();
     private final PageTable pageTable = PageTable.getInstance();
-    private Disk disk = Disk.getInstance();
-    private PhysicalMemory physicalMemory = PhysicalMemory.getInstance();
+    private final Disk disk = Disk.getInstance();
+    private final PhysicalMemory physicalMemory = PhysicalMemory.getInstance();
 
-    public void swapPage(Page page) {
+    public synchronized void swapPage(Page page) {
         System.out.println("PageFault initialized");
 
         Page oldPage = swapAlgorithm.selectUnusedPage();
 
-        oldPage.setPresentBit(false);
-        int oldPageFrameNumber = oldPage.getFrameNumber();
-        swapAlgorithm.getSecondChanceList().remove(oldPage);
+        if(oldPage == null) {
+            swapAlgorithm.getSecondChanceList().addLast(page);
+            int freeAddress = physicalMemory.getFreeFrameIndex().getFirst();
+            physicalMemory.getMemoryArray()[freeAddress] = disk.getMemoryArray()[page.getFrameNumber()];
+            disk.getMemoryArray()[page.getFrameNumber()] = null;
 
-        swapAlgorithm.getSecondChanceList().addLast(page);
-        int pageFrameNumber = page.getFrameNumber();
-        page.setPresentBit(true);
+            page.setPresentBit(true);
+            page.setFrameNumber(freeAddress);
 
-        page.setFrameNumber(oldPageFrameNumber);
-        oldPage.setFrameNumber(pageFrameNumber);
+            System.out.printf("Page swapped: now in frame %d\n",
+                    page.getFrameNumber());
 
-        Integer temp = physicalMemory.getMemoryArray()[page.getFrameNumber()];
-        physicalMemory.getMemoryArray()[page.getFrameNumber()] = physicalMemory.getMemoryArray()[oldPage.getFrameNumber()];
-        disk.getMemoryArray()[oldPage.getFrameNumber()] = temp;
+        } else {
+            Integer tempValue = physicalMemory.getMemoryArray()[oldPage.getFrameNumber()];
+            physicalMemory.getMemoryArray()[oldPage.getFrameNumber()] = disk.getMemoryArray()[page.getFrameNumber()];
+            disk.getMemoryArray()[page.getFrameNumber()] = tempValue;
 
-        System.out.printf("Page swapped: old frame %d (→ disk), now in frame %d\n",
-                page.getFrameNumber(), oldPage.getFrameNumber());
+            int tempFrameNumber = oldPage.getFrameNumber();
+            oldPage.setFrameNumber(page.getFrameNumber());
+            page.setFrameNumber(tempFrameNumber);
+
+            page.setPresentBit(true);
+            page.setReferenceBit(true);
+
+            swapAlgorithm.getSecondChanceList().addLast(page);
+
+            System.out.println("Page value: " + physicalMemory.getMemoryArray()[page.getFrameNumber()]);
+
+            System.out.printf("Page swapped: old frame %d (→ disk), now in frame %d\n",
+                    page.getFrameNumber(), oldPage.getFrameNumber());
+        }
+
     }
 
 
@@ -42,7 +57,8 @@ public class PageFault {
         pageTable.setPageTable(virtualAddress, newPage);
         memory.getMemoryArray()[freeAddress] = value;
 
-        System.out.println("Page created: " + virtualAddress);
+        System.out.println("Page created: " + virtualAddress + " at frame " + freeAddress + " " + memory);
+
         return newPage;
     }
 }

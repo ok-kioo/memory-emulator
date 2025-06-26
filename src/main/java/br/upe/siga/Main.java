@@ -24,7 +24,8 @@ public class Main {
             "3-R", "7-R", "11-R",
             "1-R", "6-R", "12-R", "14-R",
             "22-W-102", "23-W-103", "24-W-104",
-            "0-R", "20-R", "24-R", "1-R", "5-W-4", "2-R", "2-W-6"};
+            "0-R", "20-R", "24-R", "1-R", "5-W-4", "2-R", "2-W-6"
+    };
 
     public static void main(String[] args) {
         PhysicalMemory physicalMemory = PhysicalMemory.getInstance();
