@@ -3,8 +3,8 @@ package br.upe.siga.process;
 import br.upe.siga.management.MMU;
 
 public class Process {
-    public void thread(String[] process, MMU mmu) {
-        new Thread(() -> {
+    public Thread thread(String[] process, MMU mmu) {
+        Thread processThread = new Thread(() -> {
             for (String commands : process) {
                 String[] instructions = commands.split("-");
 
@@ -41,6 +41,9 @@ public class Process {
                     e.printStackTrace();
                 }
             }
-        }).start();
+        });
+
+        processThread.start();
+        return processThread;
     }
 }

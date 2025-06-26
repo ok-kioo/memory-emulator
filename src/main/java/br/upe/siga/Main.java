@@ -1,13 +1,12 @@
 package br.upe.siga;
 
+import br.upe.siga.clock.ClockObserver;
+import br.upe.siga.clock.Sweeper;
 import br.upe.siga.management.MMU;
-import br.upe.siga.management.PageFault;
-import br.upe.siga.management.PageTable;
 import br.upe.siga.memory.Disk;
 import br.upe.siga.memory.PhysicalMemory;
 import br.upe.siga.process.Process;
-import br.upe.siga.swap.AssistantClock;
-import br.upe.siga.swap.SwapAlgorithm;
+import br.upe.siga.clock.AssistantClock;
 
 public class Main {
     private static final String[] process1 = {
@@ -30,16 +29,28 @@ public class Main {
     public static void main(String[] args) {
         PhysicalMemory physicalMemory = PhysicalMemory.getInstance();
         Disk disk = Disk.getInstance();
-        PageTable pageTable = PageTable.getInstance();
-        PageFault pageFault = new PageFault();
-        SwapAlgorithm swapAlgorithm = SwapAlgorithm.getInstance();
-        new AssistantClock(swapAlgorithm).assistantClock();
+        ClockObserver sweeper = new Sweeper();
 
-        MMU mmu = new MMU(physicalMemory, disk, pageTable, swapAlgorithm, pageFault);
+        AssistantClock assistantClock = new AssistantClock(sweeper);
+        assistantClock.setProcessRunning(true);
+        assistantClock.clock();
+
+        MMU mmu = new MMU(physicalMemory, disk);
 
         Process process = new Process();
-        process.thread(process1, mmu);
-        process.thread(process2, mmu);
+        Thread threadProcess1 = process.thread(process1, mmu);
+        Thread threadProcess2 = process.thread(process2, mmu);
+
+
+        try {
+            threadProcess1.join();
+            threadProcess2.join();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        assistantClock.setProcessRunning(false);
     }
 
 }

@@ -8,18 +8,15 @@ import br.upe.siga.swap.SwapAlgorithm;
 import java.util.Arrays;
 
 public class MMU {
-    private final PageTable pageTable;
     private final PhysicalMemory physicalMemory;
     private final Disk disk;
-    private final SwapAlgorithm swapAlgorithm;
-    private final PageFault pageFault;
+    private final PageTable pageTable = PageTable.getInstance();
+    private final PageFault pageFault = new PageFault();
+    private final SwapAlgorithm swapAlgorithm = SwapAlgorithm.getInstance();
 
-    public MMU(PhysicalMemory physicalMemory, Disk disk, PageTable pageTable, SwapAlgorithm swapAlgorithm, PageFault pageFault) {
+    public MMU(PhysicalMemory physicalMemory, Disk disk) {
         this.physicalMemory = physicalMemory;
         this.disk = disk;
-        this.pageTable = pageTable;
-        this.swapAlgorithm = swapAlgorithm;
-        this.pageFault = pageFault;
     }
 
     public int readPage(int virtualAddress) {
@@ -33,10 +30,6 @@ public class MMU {
             }
             page.setReferenceBit(true);
 
-            if (virtualAddress == 20){
-                System.out.println(Arrays.toString(physicalMemory.getMemoryArray()));
-                System.out.println(page.getFrameNumber());
-            }
             return physicalMemory.getMemoryArray()[page.getFrameNumber()];
         }
     }

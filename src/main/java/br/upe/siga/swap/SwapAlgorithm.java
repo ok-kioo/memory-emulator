@@ -22,44 +22,34 @@ public class SwapAlgorithm {
     public synchronized Page selectUnusedPage() {
         synchronized (secondChanceList) {
             int size = secondChanceList.size();
+            Page returnPage = null;
 
             if (size < 16) {
-                return null;
-            }else{
+                return returnPage;
+            } else {
+
                 for (int i = 0; i < size; i++) {
-                    Page candidate = secondChanceList.peekFirst();
-                    if (candidate != null && candidate.getReferenceBit()) {
-                        candidate.setReferenceBit(false);
+                    Page page = secondChanceList.peekFirst();
+                    if (page.getReferenceBit()) {
+                        page.setReferenceBit(false);
                         secondChanceList.removeFirst();
-                        secondChanceList.addLast(candidate);
+                        secondChanceList.addLast(page);
                     } else {
-                        return secondChanceList.removeFirst();
+                        page.setPresentBit(false);
+                        int freeAddress = disk.getFreeFrameIndex().getFirst();
+                        disk.getMemoryArray()[freeAddress] = physicalMemory.getMemoryArray()[page.getFrameNumber()];
+
+                        page.setFrameNumber(freeAddress);
+                        physicalMemory.getMemoryArray()[page.getFrameNumber()] = null;
+                        returnPage = secondChanceList.removeFirst();
                     }
                 }
-            }
-        }
-        throw new IllegalArgumentException("Not found pages for swap");
-    }
 
-    public void secondChance(){
-        synchronized (secondChanceList){
-            int size = secondChanceList.size();
-
-            for (int i = 0; i < size; i++){
-                Page page = secondChanceList.peekFirst();
-                if (page.getReferenceBit()) {
-                    page.setReferenceBit(false);
-                    secondChanceList.removeFirst();
-                    secondChanceList.addLast(page);
-                } else{
-                    page.setPresentBit(false);
-                    int freeAddress = disk.getFreeFrameIndex().getFirst();
-                    disk.getMemoryArray()[freeAddress] = physicalMemory.getMemoryArray()[page.getFrameNumber()];
-
-                    page.setFrameNumber(freeAddress);
-                    physicalMemory.getMemoryArray()[page.getFrameNumber()] = null;
-                    secondChanceList.removeFirst();
+                if (returnPage == null) {
+                    throw new IllegalArgumentException("Not found pages for swap");
                 }
+
+                return returnPage;
             }
         }
     }
