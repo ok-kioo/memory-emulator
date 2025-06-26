@@ -30,4 +30,8 @@ public class PageTable {
             throw new IllegalStateException("Page table is full, cannot add more pages.");
         }
     }
+
+    public int getSizeCount() {
+        return sizeCount;
+    }
 }

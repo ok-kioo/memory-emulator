@@ -45,7 +45,7 @@ public class MMU {
         Page page = pageTable.verifyPage(virtualAddress);
 
         if (page == null) {
-            if(disk.isFull()){
+            if(pageTable.getSizeCount() == 32){
                 throw new IllegalArgumentException("All memory address fully");
             }
 
