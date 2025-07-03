@@ -42,6 +42,8 @@ public class Disk implements  Memory {
         return freeSlot;
     }
 
+
+    // Métodos thread safe para manipulação de memória
     private synchronized void allocateMemory(int index){
         this.memoryArray[index] = -1;
     }

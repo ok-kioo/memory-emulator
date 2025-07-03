@@ -1,7 +1,6 @@
 package br.upe.siga.management;
 
 import br.upe.siga.memory.Page;
-import com.sun.source.tree.SynchronizedTree;
 
 import java.util.HashMap;
 import java.util.Map;

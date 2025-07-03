@@ -13,7 +13,7 @@ public class AssistantClock {
 
     private boolean isProcessRunning;
 
-    public AssistantClock(ClockObserver observer) {
+    public AssistantClock(ClockObserver observer) { // Construtor que recebe o observer
         this.observer = observer;
     }
 
@@ -21,7 +21,7 @@ public class AssistantClock {
         new Thread(() -> {
             while (this.isProcessRunning) {
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -32,7 +32,7 @@ public class AssistantClock {
         }).start();
     }
 
-    private void notifyObserver() {
+    private void notifyObserver() { // Método que notifica o observer
         observer.listenClock();
     }
 

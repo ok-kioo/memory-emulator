@@ -2,6 +2,7 @@ package br.upe.siga.process;
 
 import br.upe.siga.management.MMU;
 
+// Classe que representa um processo no sistema
 public class Process {
     public Thread thread(String[] process, MMU mmu) {
         Thread processThread = new Thread(() -> {
@@ -23,8 +24,10 @@ public class Process {
                             break;
 
                         case "W":
-                            System.out.println("Writing to memory address: " + memoryAddress + " with value: " + dataValue);
-                            instruction.write();
+                            synchronized (mmu){
+                                System.out.println("Writing to memory address: " + memoryAddress + " with value: " + dataValue);
+                                instruction.write();
+                            }
                             System.out.println("Value written successfully");
                             break;
 

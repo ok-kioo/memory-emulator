@@ -1,9 +1,10 @@
 package br.upe.siga.memory;
 
+// Classe que representa uma página na memória física ou no disco
 public class Page {
-    private boolean referenceBit;
-    private boolean presentBit;
-    private Integer frameNumber;
+    private boolean referenceBit; // Indica se a página foi referenciada
+    private boolean presentBit; // Indica se a página está presente na memória física
+    private Integer frameNumber; // Número do quadro (frame) onde a página está armazenada
 
     public Page(boolean referenceBit, boolean presentBit, Integer frameNumber) {
         this.referenceBit = referenceBit;
