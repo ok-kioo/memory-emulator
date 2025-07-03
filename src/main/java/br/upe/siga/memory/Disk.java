@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Disk implements  Memory {
     private static final Disk instance = new Disk();
-    private Integer[] memoryArray = new Integer[MAX_MEMORY_SLOTS];
+    private Integer[] memoryArray = new Integer[32];
 
     private Disk() {
     }

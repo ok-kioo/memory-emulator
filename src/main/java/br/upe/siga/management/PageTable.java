@@ -24,8 +24,8 @@ public class PageTable {
 
     public synchronized void setPageTable(int virtualAddress, Page page) {
         if(this.sizeCount < SIZE_PAGE_TABLE) {
-            this.sizeCount++;
             virtualHash.put(virtualAddress, page);
+            this.sizeCount++;
         } else {
             throw new IllegalStateException("Page table is full, cannot add more pages.");
         }
