@@ -17,7 +17,7 @@ public class PageFault {
     public synchronized void swapPage(Page page) {
         System.out.println("PageFault initialized");
 
-        Page oldPage = swapAlgorithm.selectUnusedPage(); 
+        Page oldPage = swapAlgorithm.selectUnusedPage();
 
         if(oldPage == null) { // Se não houver, significa que a memória física não está cheia
             int freeAddress = physicalMemory.getFreeFrameIndex().getFirst();
@@ -35,22 +35,22 @@ public class PageFault {
         } else {
             int freePhysicalFrame;
 
-            
             if (oldPage.getPresentBit()) { // Se estiver na memória física, troca com a página do disco
                 freePhysicalFrame = oldPage.getFrameNumber();
 
                 Integer tempValue = physicalMemory.getMemoryArray()[freePhysicalFrame];
                 physicalMemory.getMemoryArray()[freePhysicalFrame] = disk.getMemoryArray()[page.getFrameNumber()];
                 disk.getMemoryArray()[page.getFrameNumber()] = tempValue;
+
+                oldPage.setPresentBit(false);
+                oldPage.setFrameNumber(page.getFrameNumber());
+
             } else { // Se estiver no disco, pega um novo espaço na memória física
                 freePhysicalFrame = physicalMemory.getFreeFrameIndex().getFirst();
 
                 physicalMemory.getMemoryArray()[freePhysicalFrame] = disk.getMemoryArray()[page.getFrameNumber()];
                 disk.releaseMemory(page.getFrameNumber());
             }
-
-            oldPage.setPresentBit(false);
-            oldPage.setFrameNumber(page.getFrameNumber());
 
             page.setPresentBit(true);
             page.setReferenceBit(true);
@@ -65,9 +65,7 @@ public class PageFault {
             System.out.printf("Page swapped: old frame %d (→ disk), now in frame %d\n",
                     page.getFrameNumber(), oldPage.getFrameNumber());
         }
-
     }
-
 
     // Método para criar uma nova página na memória física ou no disco
     public Page createPage(int freeAddress, int virtualAddress, Integer value, Memory memory) {

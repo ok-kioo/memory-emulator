@@ -10,9 +10,10 @@ import br.upe.siga.process.Process;
 import br.upe.siga.clock.AssistantClock;
 
 public class Main {
-    //metodo de boot do sistema
+
     //inicializa o sistema, cria os processos e inicia a execução
     public static void main(String[] args) {
+
         //Inicializa as Instruções dos Processos
         InstructionFactory instructionFactoryProcess1 = new InstructionFactory(32);
         InstructionFactory instructionFactoryProcess2 = new InstructionFactory(32);
