@@ -31,7 +31,7 @@ public class Process {
                         default:
                             System.out.println("Unknown operation: " + operation);
                     }
-                }catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 

@@ -5,6 +5,8 @@ import br.upe.siga.memory.Page;
 import br.upe.siga.memory.PhysicalMemory;
 import br.upe.siga.swap.SwapAlgorithm;
 
+import java.util.Arrays;
+
 public class PageFault {
     private final SwapAlgorithm swapAlgorithm = SwapAlgorithm.getInstance();
     private final PageTable pageTable = PageTable.getInstance();
@@ -17,13 +19,17 @@ public class PageFault {
         Page oldPage = swapAlgorithm.selectUnusedPage();
 
         if(oldPage == null) {
+            System.out.println(Arrays.toString(physicalMemory.getMemoryArray()));
+
             swapAlgorithm.getSecondChanceList().addLast(page);
             int freeAddress = physicalMemory.getFreeFrameIndex().getFirst();
             physicalMemory.getMemoryArray()[freeAddress] = disk.getMemoryArray()[page.getFrameNumber()];
-            disk.getMemoryArray()[page.getFrameNumber()] = null;
+            disk.releaseMemory(page.getFrameNumber());
 
             page.setPresentBit(true);
             page.setFrameNumber(freeAddress);
+
+            swapAlgorithm.addPage(page);
 
             System.out.printf("Page swapped: now in frame %d\n",
                     page.getFrameNumber());
@@ -40,7 +46,9 @@ public class PageFault {
             page.setPresentBit(true);
             page.setReferenceBit(true);
 
-            swapAlgorithm.getSecondChanceList().addLast(page);
+            if (page.getPresentBit() && !swapAlgorithm.getSecondChanceList().contains(page)) {
+                swapAlgorithm.getSecondChanceList().addLast(page);
+            }
 
             System.out.println("Page value: " + physicalMemory.getMemoryArray()[page.getFrameNumber()]);
 

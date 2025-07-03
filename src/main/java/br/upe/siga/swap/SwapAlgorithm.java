@@ -24,7 +24,7 @@ public class SwapAlgorithm {
             int size = secondChanceList.size();
             Page returnPage = null;
 
-            if (size < 16) {
+            if (!physicalMemory.isFull()) {
                 return returnPage;
             } else {
 
@@ -35,12 +35,13 @@ public class SwapAlgorithm {
                         secondChanceList.removeFirst();
                         secondChanceList.addLast(page);
                     } else {
-                        page.setPresentBit(false);
                         int freeAddress = disk.getFreeFrameIndex().getFirst();
                         disk.getMemoryArray()[freeAddress] = physicalMemory.getMemoryArray()[page.getFrameNumber()];
+                        physicalMemory.releaseMemory(page.getFrameNumber());
 
                         page.setFrameNumber(freeAddress);
-                        physicalMemory.getMemoryArray()[page.getFrameNumber()] = null;
+                        page.setPresentBit(false);
+
                         returnPage = secondChanceList.removeFirst();
                     }
                 }
@@ -54,7 +55,7 @@ public class SwapAlgorithm {
         }
     }
 
-    public void addPage(Page page){
+    public synchronized void addPage(Page page){
         secondChanceList.addLast(page);
     }
 

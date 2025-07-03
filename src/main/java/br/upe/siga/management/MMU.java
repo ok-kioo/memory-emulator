@@ -5,14 +5,13 @@ import br.upe.siga.memory.Page;
 import br.upe.siga.memory.PhysicalMemory;
 import br.upe.siga.swap.SwapAlgorithm;
 
-import java.util.Arrays;
-
 public class MMU {
     private final PhysicalMemory physicalMemory;
     private final Disk disk;
     private final PageTable pageTable = PageTable.getInstance();
     private final PageFault pageFault = new PageFault();
     private final SwapAlgorithm swapAlgorithm = SwapAlgorithm.getInstance();
+
 
     public MMU(PhysicalMemory physicalMemory, Disk disk) {
         this.physicalMemory = physicalMemory;

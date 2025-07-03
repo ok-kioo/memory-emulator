@@ -20,7 +20,7 @@ public class PhysicalMemory implements  Memory{
     }
 
     @Override
-    public boolean isFull() {
+    public synchronized boolean isFull() {
         for (Integer value : this.memoryArray){
             if (value == null) {
                 return false;
@@ -34,12 +34,20 @@ public class PhysicalMemory implements  Memory{
         List<Integer> freeSlot = new ArrayList<>();
         for (int i = 0; i < memoryArray.length; i++) {
             if (memoryArray[i] == null) {
+                allocateMemory(i);
                 freeSlot.add(i);
-                memoryArray[i] = -1;
                 break;
             }
         }
         return freeSlot;
+    }
+
+    private synchronized void allocateMemory(int index){
+        this.memoryArray[index] = -1;
+    }
+
+    public synchronized void releaseMemory(int index){
+        this.memoryArray[index] = null;
     }
 }
 
