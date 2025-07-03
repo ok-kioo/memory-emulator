@@ -35,18 +35,31 @@ public class PageFault {
                     page.getFrameNumber());
 
         } else {
-            Integer tempValue = physicalMemory.getMemoryArray()[oldPage.getFrameNumber()];
-            physicalMemory.getMemoryArray()[oldPage.getFrameNumber()] = disk.getMemoryArray()[page.getFrameNumber()];
-            disk.getMemoryArray()[page.getFrameNumber()] = tempValue;
+            System.out.println(oldPage.getPresentBit());
+            System.out.println(oldPage.getFrameNumber());
 
-            int tempFrameNumber = oldPage.getFrameNumber();
-            oldPage.setFrameNumber(page.getFrameNumber());
-            page.setFrameNumber(tempFrameNumber);
+            int freePhysicalFrame = oldPage.getFrameNumber(); // sempre vamos reutilizar esse frame
 
-            page.setPresentBit(true);
+            if (oldPage.getPresentBit()) {
+                // swap entre física e disco
+                Integer tempValue = physicalMemory.getMemoryArray()[freePhysicalFrame];
+                physicalMemory.getMemoryArray()[freePhysicalFrame] = disk.getMemoryArray()[page.getFrameNumber()];
+                disk.getMemoryArray()[page.getFrameNumber()] = tempValue;
+            } else {
+                // oldPage já está no disco: apenas carregar a nova page
+                physicalMemory.getMemoryArray()[freePhysicalFrame] = disk.getMemoryArray()[page.getFrameNumber()];
+                disk.releaseMemory(page.getFrameNumber());
+            }
+
+            // Atualizar metadados
+            oldPage.setPresentBit(false); // foi para o disco
+            oldPage.setFrameNumber(page.getFrameNumber()); // aponta para o disco agora
+
+            page.setPresentBit(true); // está na memória
             page.setReferenceBit(true);
+            page.setFrameNumber(freePhysicalFrame); // ocupa o frame da oldPage
 
-            if (page.getPresentBit() && !swapAlgorithm.getSecondChanceList().contains(page)) {
+            if (!swapAlgorithm.getSecondChanceList().contains(page)) {
                 swapAlgorithm.getSecondChanceList().addLast(page);
             }
 

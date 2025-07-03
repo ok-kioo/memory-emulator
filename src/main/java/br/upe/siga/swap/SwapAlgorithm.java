@@ -40,6 +40,9 @@ public class SwapAlgorithm {
                         System.out.println(Arrays.toString(disk.getMemoryArray()));
 
                         if(!disk.isFull()){
+                            System.out.println(page.getPresentBit());
+                            System.out.println(page.getFrameNumber());
+
                             int freeAddress = disk.getFreeFrameIndex().getFirst();
                             disk.getMemoryArray()[freeAddress] = physicalMemory.getMemoryArray()[page.getFrameNumber()];
                             physicalMemory.releaseMemory(page.getFrameNumber());
@@ -49,7 +52,6 @@ public class SwapAlgorithm {
                             returnPage = secondChanceList.removeFirst();
 
                         } else{
-                            page.setPresentBit(false);
                             returnPage = secondChanceList.removeFirst();
                             break;
                         }
