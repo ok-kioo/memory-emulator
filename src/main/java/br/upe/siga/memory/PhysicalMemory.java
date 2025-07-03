@@ -3,9 +3,10 @@ package br.upe.siga.memory;
 import java.util.ArrayList;
 import java.util.List;
 
+// Classe que representa a memória física do sistema
 public class PhysicalMemory implements  Memory{
     private static final PhysicalMemory instance = new PhysicalMemory();
-    private Integer[] memoryArray = new Integer[MAX_MEMORY_SLOTS];
+    private Integer[] memoryArray = new Integer[MAX_MEMORY_SLOTS]; // Array que representa os slots de memória física
 
     private PhysicalMemory() {
     }
@@ -20,7 +21,7 @@ public class PhysicalMemory implements  Memory{
     }
 
     @Override
-    public boolean isFull() {
+    public synchronized boolean isFull() {
         for (Integer value : this.memoryArray){
             if (value == null) {
                 return false;
@@ -34,12 +35,21 @@ public class PhysicalMemory implements  Memory{
         List<Integer> freeSlot = new ArrayList<>();
         for (int i = 0; i < memoryArray.length; i++) {
             if (memoryArray[i] == null) {
+                allocateMemory(i);
                 freeSlot.add(i);
-                memoryArray[i] = -1;
                 break;
             }
         }
         return freeSlot;
+    }
+
+    // Métodos thread safe para manipulação de memória
+    private synchronized void allocateMemory(int index){
+        this.memoryArray[index] = -1;
+    }
+
+    public synchronized void releaseMemory(int index){
+        this.memoryArray[index] = null;
     }
 }
 

@@ -1,44 +1,51 @@
 package br.upe.siga;
 
+import br.upe.siga.clock.ClockObserver;
+import br.upe.siga.clock.Sweeper;
 import br.upe.siga.management.MMU;
-import br.upe.siga.management.PageFault;
-import br.upe.siga.management.PageTable;
 import br.upe.siga.memory.Disk;
 import br.upe.siga.memory.PhysicalMemory;
+import br.upe.siga.process.InstructionFactory;
 import br.upe.siga.process.Process;
-import br.upe.siga.swap.AssistantClock;
-import br.upe.siga.swap.SwapAlgorithm;
+import br.upe.siga.clock.AssistantClock;
 
 public class Main {
-    private static final String[] process1 = {
-            "0-W-10", "1-W-11", "2-W-12", "3-W-13", "8-W-18",
-            "4-W-14", "5-W-15", "6-W-16",
-            "12-W-22", "13-W-23", "14-W-24", "15-W-25",
-            "0-R", "5-R",
-            "20-W-108","10-R", "15-R",
-            "20-W-100", "21-W-101"
-    };
 
-    private static final String[] process2 = {"7-W-17",
-            "8-W-18", "9-W-19", "10-W-20", "11-W-21",
-            "3-R", "7-R", "11-R",
-            "1-R", "6-R", "12-R", "14-R",
-            "22-W-102", "23-W-103", "24-W-104",
-            "0-R", "20-R", "24-R", "1-R", "5-W-4", "2-R", "2-W-6"};
-
+    //inicializa o sistema, cria os processos e inicia a execução
     public static void main(String[] args) {
+
+        //Inicializa as Instruções dos Processos
+        InstructionFactory instructionFactoryProcess1 = new InstructionFactory(32);
+        InstructionFactory instructionFactoryProcess2 = new InstructionFactory(32);
+
+        //Cria as Memórias Físicas e Disco
         PhysicalMemory physicalMemory = PhysicalMemory.getInstance();
         Disk disk = Disk.getInstance();
-        PageTable pageTable = PageTable.getInstance();
-        PageFault pageFault = new PageFault();
-        SwapAlgorithm swapAlgorithm = SwapAlgorithm.getInstance();
-        new AssistantClock(swapAlgorithm).assistantClock();
+        ClockObserver sweeper = new Sweeper(); //Limpador de Disco
 
-        MMU mmu = new MMU(physicalMemory, disk, pageTable, swapAlgorithm, pageFault);
+        //Inicializa o Clock
+        AssistantClock assistantClock = new AssistantClock(sweeper);
+        assistantClock.setProcessRunning(true);
+        assistantClock.clock();
+        
+        MMU mmu = new MMU(physicalMemory, disk);
 
+        //Cria as Threads dos Processos
         Process process = new Process();
-        process.thread(process1, mmu);
-        process.thread(process2, mmu);
+        Thread threadProcess1 = process.thread(instructionFactoryProcess1.getNewInstruction(), mmu);
+        Thread threadProcess2 = process.thread(instructionFactoryProcess2.getNewInstruction(), mmu);
+
+        try {
+            //Aguarda o término das Threads
+            threadProcess1.join();
+            threadProcess2.join();
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        //Finaliza o clock
+        assistantClock.setProcessRunning(false);
     }
 
 }
