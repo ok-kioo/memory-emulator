@@ -21,7 +21,7 @@ public class PageFault {
         if(oldPage == null) {
             System.out.println(Arrays.toString(physicalMemory.getMemoryArray()));
 
-            swapAlgorithm.getSecondChanceList().addLast(page);
+            // swapAlgorithm.getSecondChanceList().addLast(page);
             int freeAddress = physicalMemory.getFreeFrameIndex().getFirst();
             physicalMemory.getMemoryArray()[freeAddress] = disk.getMemoryArray()[page.getFrameNumber()];
             disk.releaseMemory(page.getFrameNumber());
