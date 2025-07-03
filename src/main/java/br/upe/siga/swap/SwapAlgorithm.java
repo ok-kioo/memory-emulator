@@ -4,7 +4,6 @@ import br.upe.siga.memory.Disk;
 import br.upe.siga.memory.Page;
 import br.upe.siga.memory.PhysicalMemory;
 
-import java.util.Arrays;
 import java.util.LinkedList;
 
 public class SwapAlgorithm {
@@ -37,13 +36,7 @@ public class SwapAlgorithm {
                         secondChanceList.removeFirst();
                         secondChanceList.addLast(page);
                     } else {
-                        System.out.println(Arrays.toString(physicalMemory.getMemoryArray()));
-                        System.out.println(Arrays.toString(disk.getMemoryArray()));
-
                         if(!disk.isFull()){
-                            System.out.println("Swap " + page.getPresentBit());
-                            System.out.println("Swap " + page.getFrameNumber());
-
                             int freeAddress = disk.getFreeFrameIndex().getFirst();
                             disk.getMemoryArray()[freeAddress] = physicalMemory.getMemoryArray()[page.getFrameNumber()];
                             physicalMemory.releaseMemory(page.getFrameNumber());

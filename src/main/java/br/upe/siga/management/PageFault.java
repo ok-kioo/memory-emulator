@@ -5,7 +5,6 @@ import br.upe.siga.memory.Page;
 import br.upe.siga.memory.PhysicalMemory;
 import br.upe.siga.swap.SwapAlgorithm;
 
-import java.util.Arrays;
 
 public class PageFault {
     private final SwapAlgorithm swapAlgorithm = SwapAlgorithm.getInstance();
@@ -19,9 +18,6 @@ public class PageFault {
         Page oldPage = swapAlgorithm.selectUnusedPage();
 
         if(oldPage == null) {
-            System.out.println(Arrays.toString(physicalMemory.getMemoryArray()));
-
-            // swapAlgorithm.getSecondChanceList().addLast(page);
             int freeAddress = physicalMemory.getFreeFrameIndex().getFirst();
             physicalMemory.getMemoryArray()[freeAddress] = disk.getMemoryArray()[page.getFrameNumber()];
             disk.releaseMemory(page.getFrameNumber());
@@ -35,32 +31,30 @@ public class PageFault {
                     page.getFrameNumber());
 
         } else {
-            System.out.println(oldPage.getPresentBit());
-            System.out.println(oldPage.getFrameNumber());
-
-            int freePhysicalFrame = oldPage.getFrameNumber(); // sempre vamos reutilizar esse frame
+            int freePhysicalFrame;
 
             if (oldPage.getPresentBit()) {
-                // swap entre física e disco
+                freePhysicalFrame = oldPage.getFrameNumber();
+
                 Integer tempValue = physicalMemory.getMemoryArray()[freePhysicalFrame];
                 physicalMemory.getMemoryArray()[freePhysicalFrame] = disk.getMemoryArray()[page.getFrameNumber()];
                 disk.getMemoryArray()[page.getFrameNumber()] = tempValue;
             } else {
-                // oldPage já está no disco: apenas carregar a nova page
+                freePhysicalFrame = physicalMemory.getFreeFrameIndex().getFirst();
+
                 physicalMemory.getMemoryArray()[freePhysicalFrame] = disk.getMemoryArray()[page.getFrameNumber()];
                 disk.releaseMemory(page.getFrameNumber());
             }
 
-            // Atualizar metadados
-            oldPage.setPresentBit(false); // foi para o disco
-            oldPage.setFrameNumber(page.getFrameNumber()); // aponta para o disco agora
+            oldPage.setPresentBit(false);
+            oldPage.setFrameNumber(page.getFrameNumber());
 
-            page.setPresentBit(true); // está na memória
+            page.setPresentBit(true);
             page.setReferenceBit(true);
-            page.setFrameNumber(freePhysicalFrame); // ocupa o frame da oldPage
+            page.setFrameNumber(freePhysicalFrame);
 
             if (!swapAlgorithm.getSecondChanceList().contains(page)) {
-                swapAlgorithm.getSecondChanceList().addLast(page);
+                swapAlgorithm.addPage(page);
             }
 
             System.out.println("Page value: " + physicalMemory.getMemoryArray()[page.getFrameNumber()]);
